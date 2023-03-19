@@ -1,18 +1,53 @@
 import * as React from 'react';
 
-import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'rn-intents';
+import { StyleSheet, View, Button } from 'react-native';
+import { sendIntent } from 'rn-intents';
+
+type Uri = { schema: string; ssp: string };
 
 export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
+  const handleOpenManageAppAllFilesAccessPermission = async () => {
+    // Action name that will be handled
+    const ACTION_NAME: string =
+      'android.settings.MANAGE_APP_ALL_FILES_ACCESS_PERMISSION';
 
-  React.useEffect(() => {
-    multiply(3, 7).then(setResult);
-  }, []);
+    // If action requires data we can provide it.
+    // For example MANAGE_APP_ALL_FILES_ACCESS_PERMISSION action requires uri below:
+
+    const uri: Uri = {
+      schema: 'package',
+      ssp: 'com.rnintentsexample',
+    };
+
+    try {
+      await sendIntent(ACTION_NAME, uri);
+    } catch (error) {
+      console.log('Error occured : ', error);
+    }
+  };
+
+  const handleOpenLocationSourceSettings = async () => {
+    const ACTION_NAME: string = 'android.settings.LOCATION_SOURCE_SETTINGS';
+
+    try {
+      //LOCATION_SOURCE_SETTINGS intent does not require uri.
+
+      await sendIntent(ACTION_NAME);
+    } catch (error) {
+      console.log('Error occured : ', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      <Button
+        title="Open manage app all files permission"
+        onPress={handleOpenManageAppAllFilesAccessPermission}
+      />
+      <Button
+        title="Open location source settings"
+        onPress={handleOpenLocationSourceSettings}
+      />
     </View>
   );
 }
@@ -22,10 +57,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
   },
 });

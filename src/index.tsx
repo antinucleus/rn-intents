@@ -17,6 +17,11 @@ const RnIntents = NativeModules.RnIntents
       }
     );
 
-export function multiply(a: number, b: number): Promise<number> {
-  return RnIntents.multiply(a, b);
+type Uri = {
+  schema: string;
+  ssp: string;
+};
+
+export function sendIntent(action: string, uri?: Uri): Promise<void> {
+  return RnIntents.sendIntent(action, uri?.schema ?? '', uri?.ssp ?? '');
 }
